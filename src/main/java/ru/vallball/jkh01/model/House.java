@@ -1,5 +1,6 @@
 package ru.vallball.jkh01.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -47,6 +48,7 @@ public class House {
 		this.entrances = entrances;
 		this.levels = levels;
 		this.apartmentsByLevel = apartmentsByLevel;
+		createApartments();
 	}
 
 	public String getStreet() {
@@ -99,6 +101,19 @@ public class House {
 
 	public void setApartmentsByLevel(int apartmentsByLevel) {
 		this.apartmentsByLevel = apartmentsByLevel;
+	}
+	
+	public void createApartments() {
+		List<Apartment> list = new ArrayList<>();
+		int howManyApartmentsInHouse = this.getApartmentsByLevel() * this.getEntrances() * this.getLevels();
+		int howManyApartmentsInEntrance = this.getApartmentsByLevel() * this.getLevels();
+		for (int i = 1; i <= howManyApartmentsInHouse; i++) {
+			int entrance = i / howManyApartmentsInEntrance + 1;
+			int level = (i - (entrance - 1) * howManyApartmentsInEntrance) / this.getApartmentsByLevel() + 1;
+			Apartment apartment = new Apartment(i, entrance, level, this);
+			list.add(apartment);
+		}
+		this.apartments = list;
 	}
 
 }
