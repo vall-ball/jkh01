@@ -59,6 +59,7 @@ public class TenantController {
 			tenantForUpdate.setApartment(tenant.getApartment());
 			tenantForUpdate.setLastname(tenant.getLastname());
 			tenantForUpdate.setName(tenant.getName());
+			tenantService.save(tenantForUpdate);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>("Tenant not found", HttpStatus.BAD_REQUEST);
 		}
