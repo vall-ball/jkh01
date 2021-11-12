@@ -10,10 +10,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "houses")
+@Table(name = "houses", uniqueConstraints = {@UniqueConstraint(columnNames = {"street", "number"})})
 public class House {
 	
 	@Id
@@ -24,7 +25,7 @@ public class House {
 	private String street;
 	
 	@NotNull
-	private int number;
+	private String number;
 	
 	@NotNull
 	private int entrances;
@@ -42,7 +43,7 @@ public class House {
 		
 	}
 	
-	public House(@NotNull String street, @NotNull int number, @NotNull int entrances, @NotNull int levels, @NotNull int apartmentsByLevel) {
+	public House(@NotNull String street, @NotNull String number, @NotNull int entrances, @NotNull int levels, @NotNull int apartmentsByLevel) {
 		this.street = street;
 		this.number = number;
 		this.entrances = entrances;
@@ -59,11 +60,11 @@ public class House {
 		this.street = street;
 	}
 
-	public int getNumber() {
+	public String getNumber() {
 		return number;
 	}
 
-	public void setNumber(int number) {
+	public void setNumber(String number) {
 		this.number = number;
 	}
 
