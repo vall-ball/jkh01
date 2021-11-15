@@ -1,8 +1,9 @@
 package ru.vallball.jkh01.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,8 @@ import ru.vallball.jkh01.repository.HouseRepository;
 @Transactional
 public class HouseServiceImpl implements HouseService {
 	
+	static final Logger logger = LoggerFactory.getLogger(HouseService.class);
+	
 	@Autowired
 	HouseRepository houseRepository;
 	
@@ -24,6 +27,7 @@ public class HouseServiceImpl implements HouseService {
 
 	@Override
 	public void save(House house) {
+		logger.info(house.toString());
 		houseRepository.save(house);
 		for (Apartment a : house.getApartments()) {
 			apartmentRepository.save(a);

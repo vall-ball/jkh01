@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "houses", uniqueConstraints = {@UniqueConstraint(columnNames = {"street", "number"})})
 public class House {
@@ -37,20 +39,21 @@ public class House {
 	private int apartmentsByLevel;
 	
 	@OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Apartment> apartments;
 	
 	public House() {
-		
+		//createApartments();
 	}
 	
-	public House(@NotNull String street, @NotNull String number, @NotNull int entrances, @NotNull int levels, @NotNull int apartmentsByLevel) {
+	/*public House(@NotNull String street, @NotNull String number, @NotNull int entrances, @NotNull int levels, @NotNull int apartmentsByLevel) {
 		this.street = street;
 		this.number = number;
 		this.entrances = entrances;
 		this.levels = levels;
 		this.apartmentsByLevel = apartmentsByLevel;
-		createApartments();
-	}
+		
+	}*/
 
 	public String getStreet() {
 		return street;
@@ -109,12 +112,20 @@ public class House {
 		int howManyApartmentsInHouse = this.getApartmentsByLevel() * this.getEntrances() * this.getLevels();
 		int howManyApartmentsInEntrance = this.getApartmentsByLevel() * this.getLevels();
 		for (int i = 1; i <= howManyApartmentsInHouse; i++) {
-			int entrance = i / howManyApartmentsInEntrance + 1;
-			int level = (i - (entrance - 1) * howManyApartmentsInEntrance) / this.getApartmentsByLevel() + 1;
+			int entrance = (i - 1) / howManyApartmentsInEntrance + 1;
+			int level = (i - (entrance - 1) * howManyApartmentsInEntrance - 1) / this.getApartmentsByLevel() + 1;
 			Apartment apartment = new Apartment(i, entrance, level, this);
 			list.add(apartment);
 		}
 		this.apartments = list;
 	}
+
+	@Override
+	public String toString() {
+		return "House [street=" + street + ", number=" + number + ", entrances=" + entrances + ", levels=" + levels
+				+ ", apartmentsByLevel=" + apartmentsByLevel + "]";
+	}
+	
+	
 
 }

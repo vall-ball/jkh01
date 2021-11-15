@@ -5,6 +5,8 @@ import java.util.NoSuchElementException;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,8 @@ import ru.vallball.jkh01.service.HouseService;
 @RestController
 @RequestMapping(value = "/houses")
 public class HouseController {
+	
+	static final Logger logger = LoggerFactory.getLogger(HouseController.class);
 
 	@Autowired
 	HouseService houseService;
@@ -43,7 +47,9 @@ public class HouseController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Object> create(@RequestBody House house) {
+	public ResponseEntity<Object> create(@Valid @RequestBody House house) {
+		house.createApartments();
+		logger.info(house.toString());
 		try {
 			houseService.save(house);
 			return new ResponseEntity<>("House is created successfully", HttpStatus.CREATED);
