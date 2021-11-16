@@ -6,4 +6,5 @@ import ru.vallball.jkh01.model.House;
 
 public interface HouseRepository extends JpaRepository<House, Long>{
 	
+	public House findByStreetIgnoreCaseAndNumberIgnoreCase(String street, String number);
 }

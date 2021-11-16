@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.vallball.jkh01.model.Apartment;
+import ru.vallball.jkh01.model.House;
 import ru.vallball.jkh01.repository.ApartmentRepository;
+import ru.vallball.jkh01.repository.HouseRepository;
 
 @Service
 @Transactional
@@ -15,6 +17,9 @@ public class ApartmentServiceImpl implements ApartmentService{
 	
 	@Autowired
 	ApartmentRepository apartmentRepository;
+	
+	@Autowired
+	HouseRepository houseRepository;
 
 	@Override
 	public void save(Apartment apartment) {
@@ -35,6 +40,12 @@ public class ApartmentServiceImpl implements ApartmentService{
 	@Override
 	public Apartment findById(Long id) {
 		return apartmentRepository.getById(id);
+	}
+
+	@Override
+	public List<Apartment> listByHome(String street, String number) {
+		House house = houseRepository.findByStreetIgnoreCaseAndNumberIgnoreCase(street, number);
+		return apartmentRepository.findByHouse(house);
 	}
 
 }

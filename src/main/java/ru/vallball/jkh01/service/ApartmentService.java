@@ -14,4 +14,6 @@ public interface ApartmentService {
 	void delete(Long id);
 
 	Apartment findById(Long id);
+	
+	List<Apartment> listByHome(String street, String number);
 }

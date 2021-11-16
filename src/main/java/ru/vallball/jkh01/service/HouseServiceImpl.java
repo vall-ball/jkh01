@@ -49,4 +49,9 @@ public class HouseServiceImpl implements HouseService {
 		return houseRepository.getById(id);
 	}
 
+	@Override
+	public House findByAddress(String street, String number) {
+		return houseRepository.findByStreetIgnoreCaseAndNumberIgnoreCase(street, number);
+	}
+
 }

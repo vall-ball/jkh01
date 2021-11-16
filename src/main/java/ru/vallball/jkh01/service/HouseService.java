@@ -14,4 +14,6 @@ public interface HouseService {
 
 	House findById(Long id);
 	
+	House findByAddress(String street, String number);
+	
 }

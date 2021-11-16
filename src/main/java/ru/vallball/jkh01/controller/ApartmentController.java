@@ -81,4 +81,9 @@ public class ApartmentController {
 		return new ResponseEntity<>("Apartment is deleted successfully", HttpStatus.ACCEPTED);
 	}
 
+	@GetMapping("/{street}/{number}")
+	@ResponseBody
+	public List<Apartment> listByHouse(@PathVariable(value = "street") String street, @PathVariable(value = "number") String number) {
+		return apartmentService.listByHome(street, number);
+	}
 }

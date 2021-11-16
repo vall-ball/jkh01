@@ -13,10 +13,13 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "houses", uniqueConstraints = {@UniqueConstraint(columnNames = {"street", "number"})})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
 public class House {
 	
 	@Id

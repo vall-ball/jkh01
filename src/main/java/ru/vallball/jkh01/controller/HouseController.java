@@ -84,5 +84,28 @@ public class HouseController {
 		}
 		return new ResponseEntity<>("House is deleted successfully", HttpStatus.ACCEPTED);
 	}
+	
+	@GetMapping("/{street}/{number}")
+	@ResponseBody
+	public House getByAddress(@PathVariable(value = "street") String street, @PathVariable(value = "number") String number) {
+		return houseService.findByAddress(street, number);
+	}
+	
+	@PutMapping("/{street}/{number}")
+	public ResponseEntity<Object> update(@PathVariable(value = "street") String street, @PathVariable(value = "number") String number, @Valid @RequestBody House house) {
+		try {
+			House houseForUpdate = houseService.findByAddress(street, number);
+			houseForUpdate.setApartments(house.getApartments());
+			houseForUpdate.setApartmentsByLevel(house.getApartmentsByLevel());
+			houseForUpdate.setEntrances(house.getEntrances());
+			houseForUpdate.setLevels(house.getLevels());
+			houseForUpdate.setNumber(house.getNumber());
+			houseForUpdate.setStreet(house.getStreet());
+			houseService.save(houseForUpdate);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("House is updated successfully", HttpStatus.ACCEPTED);
+	}
 
 }
