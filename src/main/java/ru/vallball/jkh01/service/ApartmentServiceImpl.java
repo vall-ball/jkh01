@@ -39,7 +39,7 @@ public class ApartmentServiceImpl implements ApartmentService{
 
 	@Override
 	public Apartment findById(Long id) {
-		return apartmentRepository.getById(id);
+		return apartmentRepository.findById(id).get();
 	}
 
 	@Override

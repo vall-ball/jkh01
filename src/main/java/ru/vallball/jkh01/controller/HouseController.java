@@ -28,7 +28,7 @@ import ru.vallball.jkh01.service.HouseService;
 @RestController
 @RequestMapping(value = "/houses")
 public class HouseController {
-	
+
 	static final Logger logger = LoggerFactory.getLogger(HouseController.class);
 
 	@Autowired
@@ -42,10 +42,14 @@ public class HouseController {
 
 	@GetMapping("/{id}")
 	@ResponseBody
-	public House get(@PathVariable(value = "id") Long id) {
-		return houseService.findById(id);
+	public ResponseEntity<Object> get(@PathVariable(value = "id") Long id) {
+		try {
+			return ResponseEntity.ok(houseService.findById(id));
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
+		}
 	}
-
+	
 	@PostMapping
 	public ResponseEntity<Object> create(@Valid @RequestBody House house) {
 		house.createApartments();
@@ -84,15 +88,17 @@ public class HouseController {
 		}
 		return new ResponseEntity<>("House is deleted successfully", HttpStatus.ACCEPTED);
 	}
-	
+
 	@GetMapping("/{street}/{number}")
 	@ResponseBody
-	public House getByAddress(@PathVariable(value = "street") String street, @PathVariable(value = "number") String number) {
+	public House getByAddress(@PathVariable(value = "street") String street,
+			@PathVariable(value = "number") String number) {
 		return houseService.findByAddress(street, number);
 	}
-	
+
 	@PutMapping("/{street}/{number}")
-	public ResponseEntity<Object> update(@PathVariable(value = "street") String street, @PathVariable(value = "number") String number, @Valid @RequestBody House house) {
+	public ResponseEntity<Object> update(@PathVariable(value = "street") String street,
+			@PathVariable(value = "number") String number, @Valid @RequestBody House house) {
 		try {
 			House houseForUpdate = houseService.findByAddress(street, number);
 			houseForUpdate.setApartments(house.getApartments());

@@ -38,9 +38,14 @@ public class ApartmentController {
 
 	@GetMapping("/{id}")
 	@ResponseBody
-	public Apartment get(@PathVariable(value = "id") Long id) {
-		return apartmentService.findById(id);
+	public ResponseEntity<Object> get(@PathVariable(value = "id") Long id) {
+		try {
+			return ResponseEntity.ok(apartmentService.findById(id));
+		} catch (Exception e) {
+			return new ResponseEntity<>("Apartment not found", HttpStatus.BAD_REQUEST);
+		}
 	}
+	
 
 	@PostMapping
 	public ResponseEntity<Object> create(@RequestBody Apartment apartment) {
