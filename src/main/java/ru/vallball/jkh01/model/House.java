@@ -10,15 +10,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "houses", uniqueConstraints = {@UniqueConstraint(columnNames = {"street", "number"})})
+@Table(name = "houses")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
 public class House {
 	
@@ -26,19 +25,19 @@ public class House {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull
+	@NotBlank
 	private String street;
 	
-	@NotNull
+	@NotBlank
 	private String number;
 	
-	@NotNull
+	@Positive
 	private int entrances;
 	
-	@NotNull
+	@Positive
 	private int levels;
 	
-	@NotNull
+	@Positive
 	private int apartmentsByLevel;
 	
 	@OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
@@ -46,18 +45,9 @@ public class House {
 	private List<Apartment> apartments;
 	
 	public House() {
-		//createApartments();
+		
 	}
 	
-	/*public House(@NotNull String street, @NotNull String number, @NotNull int entrances, @NotNull int levels, @NotNull int apartmentsByLevel) {
-		this.street = street;
-		this.number = number;
-		this.entrances = entrances;
-		this.levels = levels;
-		this.apartmentsByLevel = apartmentsByLevel;
-		
-	}*/
-
 	public String getStreet() {
 		return street;
 	}
@@ -117,7 +107,11 @@ public class House {
 		for (int i = 1; i <= howManyApartmentsInHouse; i++) {
 			int entrance = (i - 1) / howManyApartmentsInEntrance + 1;
 			int level = (i - (entrance - 1) * howManyApartmentsInEntrance - 1) / this.getApartmentsByLevel() + 1;
-			Apartment apartment = new Apartment(i, entrance, level, this);
+			Apartment apartment = new Apartment();
+			apartment.setEntrance(entrance);
+			apartment.setHouse(this);
+			apartment.setLevel(level);
+			apartment.setNumber(i);
 			list.add(apartment);
 		}
 		this.apartments = list;

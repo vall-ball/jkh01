@@ -27,7 +27,8 @@ public class HouseServiceImpl implements HouseService {
 
 	@Override
 	public void save(House house) {
-		logger.info(house.toString());
+		house.setStreet(house.getStreet().toLowerCase());
+		house.setNumber(house.getNumber().toLowerCase());
 		houseRepository.save(house);
 		for (Apartment a : house.getApartments()) {
 			apartmentRepository.save(a);
@@ -46,6 +47,7 @@ public class HouseServiceImpl implements HouseService {
 
 	@Override
 	public House findById(Long id) {
+		System.out.println("id = " + id);
 		return houseRepository.findById(id).get();
 	}
 

@@ -53,12 +53,14 @@ public class HouseController {
 	@PostMapping
 	public ResponseEntity<Object> create(@Valid @RequestBody House house) {
 		house.createApartments();
+		house.setStreet(house.getStreet().toLowerCase());
+		house.setNumber(house.getNumber().toLowerCase());
 		logger.info(house.toString());
 		try {
 			houseService.save(house);
 			return new ResponseEntity<>("House is created successfully", HttpStatus.CREATED);
 		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "House is exist", e);
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 

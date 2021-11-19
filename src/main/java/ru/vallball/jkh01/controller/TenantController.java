@@ -48,7 +48,7 @@ public class TenantController {
 			tenantService.save(tenant);
 			return new ResponseEntity<>("Tenant is created successfully", HttpStatus.CREATED);
 		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tenant is exist", e);
+			return new ResponseEntity("Tenant is exist", HttpStatus.BAD_REQUEST);
 		}
 	}
 

@@ -9,20 +9,25 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "apartments")
+@Table(name = "apartments", uniqueConstraints = {@UniqueConstraint(columnNames = {"house_id", "number"})})
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
+@ApartmentConstraint
+@UniqueApartmentConstraint
 public class Apartment {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull
+	@Positive
 	private int number;
 	
 	@NotNull
@@ -36,25 +41,21 @@ public class Apartment {
 	@JoinColumn(name = "house_id", nullable = false)
 	private House house;
 	
+	@PositiveOrZero
 	private double area;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "tenant_id")
 	private Tenant tenant;
 	
+	@PositiveOrZero
 	private int howManyTenants;
 	
+	@PositiveOrZero
 	private int howManyRooms;
 
 	public Apartment() {
 		
-	}
-
-	public Apartment(@NotNull int number, @NotNull int entrance, @NotNull int level, @NotNull House house) {
-		this.number = number;
-		this.entrance = entrance;
-		this.level = level;
-		this.house = house;
 	}
 
 	public int getNumber() {

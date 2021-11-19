@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import ru.vallball.jkh01.model.Apartment;
+import ru.vallball.jkh01.model.ApartmentValidator;
 import ru.vallball.jkh01.service.ApartmentService;
 
 @RestController
@@ -45,7 +49,6 @@ public class ApartmentController {
 			return new ResponseEntity<>("Apartment not found", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
 
 	@PostMapping
 	public ResponseEntity<Object> create(@RequestBody Apartment apartment) {
@@ -53,7 +56,7 @@ public class ApartmentController {
 			apartmentService.save(apartment);
 			return new ResponseEntity<>("Apartment is created successfully", HttpStatus.CREATED);
 		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Apartment is exist", e);
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -88,7 +91,8 @@ public class ApartmentController {
 
 	@GetMapping("/{street}/{number}")
 	@ResponseBody
-	public List<Apartment> listByHouse(@PathVariable(value = "street") String street, @PathVariable(value = "number") String number) {
+	public List<Apartment> listByHouse(@PathVariable(value = "street") String street,
+			@PathVariable(value = "number") String number) {
 		return apartmentService.listByHome(street, number);
 	}
 }

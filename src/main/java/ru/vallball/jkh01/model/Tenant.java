@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -16,10 +17,10 @@ public class Tenant {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull
+	@NotBlank
 	private String name;
 	
-	@NotNull
+	@NotBlank
 	private String lastname;
 	
 	@OneToOne(mappedBy = "tenant")
