@@ -53,7 +53,7 @@ public class TenantController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @Valid @RequestBody Tenant tenant) {
+	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @RequestBody Tenant tenant) {
 		try {
 			Tenant tenantForUpdate = tenantService.findById(id);
 			tenantForUpdate.setApartment(tenant.getApartment());

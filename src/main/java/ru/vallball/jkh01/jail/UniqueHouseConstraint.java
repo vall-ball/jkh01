@@ -1,4 +1,4 @@
-package ru.vallball.jkh01.model;
+package ru.vallball.jkh01.jail;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,12 +8,12 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Constraint(validatedBy = UniqueApartmentValidator.class)
+@Constraint(validatedBy = UniqueHouseValidator.class)
 @Target( { ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UniqueApartmentConstraint {
+public @interface UniqueHouseConstraint {
 
-	String message() default "The number of the apartment must be unique in the same house";
+	String message() default "The number and street of the house must be unique";
 	 
     Class<?>[] groups() default {};
  

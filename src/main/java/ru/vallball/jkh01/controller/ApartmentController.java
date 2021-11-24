@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import ru.vallball.jkh01.jail.ApartmentValidator;
 import ru.vallball.jkh01.model.Apartment;
-import ru.vallball.jkh01.model.ApartmentValidator;
 import ru.vallball.jkh01.service.ApartmentService;
 
 @RestController
@@ -51,7 +51,7 @@ public class ApartmentController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Object> create(@RequestBody Apartment apartment) {
+	public ResponseEntity<Object> create(@Valid @RequestBody Apartment apartment) {
 		try {
 			apartmentService.save(apartment);
 			return new ResponseEntity<>("Apartment is created successfully", HttpStatus.CREATED);
@@ -61,7 +61,7 @@ public class ApartmentController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @Valid @RequestBody Apartment apartment) {
+	public ResponseEntity<Object> update(@Valid @PathVariable(value = "id") Long id, @RequestBody Apartment apartment) {
 		try {
 			Apartment apartmentForUpdate = apartmentService.findById(id);
 			apartmentForUpdate.setArea(apartment.getArea());
@@ -73,7 +73,7 @@ public class ApartmentController {
 			apartmentForUpdate.setNumber(apartment.getNumber());
 			apartmentForUpdate.setTenant(apartment.getTenant());
 			apartmentService.save(apartmentForUpdate);
-		} catch (NoSuchElementException e) {
+		} catch (Exception e) {
 			return new ResponseEntity<>("Apartment not found", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>("Apartment is updated successfully", HttpStatus.ACCEPTED);

@@ -19,8 +19,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "apartments", uniqueConstraints = {@UniqueConstraint(columnNames = {"house_id", "number"})})
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
-@ApartmentConstraint
-@UniqueApartmentConstraint
 public class Apartment {
 	
 	@Id
@@ -55,7 +53,7 @@ public class Apartment {
 	private int howManyRooms;
 
 	public Apartment() {
-		
+		//System.out.println("Apartment is creating");
 	}
 
 	public int getNumber() {

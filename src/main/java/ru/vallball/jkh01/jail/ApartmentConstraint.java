@@ -1,4 +1,4 @@
-package ru.vallball.jkh01.model;
+package ru.vallball.jkh01.jail;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

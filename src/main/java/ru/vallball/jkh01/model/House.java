@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 
@@ -17,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "houses")
+@Table(name = "houses", uniqueConstraints = {@UniqueConstraint(columnNames = {"street", "number"})})
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
 public class House {
 	
@@ -25,19 +26,19 @@ public class House {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotBlank
+	@NotBlank(message = "The street must be")
 	private String street;
 	
-	@NotBlank
+	@NotBlank(message = "The number must be")
 	private String number;
 	
-	@Positive
+	@Positive(message = "The number of entrances must be more zero")
 	private int entrances;
 	
-	@Positive
+	@Positive(message = "The number of levels must be more zero")
 	private int levels;
 	
-	@Positive
+	@Positive(message = "The number of apartments by level must be more zero")
 	private int apartmentsByLevel;
 	
 	@OneToMany(mappedBy = "house", cascade = CascadeType.ALL)

@@ -6,7 +6,7 @@ import ru.vallball.jkh01.model.House;
 
 public interface HouseService {
 	
-	void save(House house);
+	void save(House house) throws Exception;
 
 	List<House> list();
 

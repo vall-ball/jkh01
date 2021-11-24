@@ -1,6 +1,11 @@
 package ru.vallball.jkh01.service;
 
 import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,19 +21,25 @@ import ru.vallball.jkh01.repository.HouseRepository;
 @Service
 @Transactional
 public class HouseServiceImpl implements HouseService {
-	
+
 	static final Logger logger = LoggerFactory.getLogger(HouseService.class);
-	
+
 	@Autowired
 	HouseRepository houseRepository;
-	
+
 	@Autowired
 	ApartmentRepository apartmentRepository;
+	
+	@Autowired
+	MyHardHouseValidator validator;
 
 	@Override
-	public void save(House house) {
+	public void save(House house) throws Exception {
 		house.setStreet(house.getStreet().toLowerCase());
 		house.setNumber(house.getNumber().toLowerCase());
+		if (!validator.isUnique(house)) {
+			throw new Exception("The number and the street must be unique");
+		}
 		houseRepository.save(house);
 		for (Apartment a : house.getApartments()) {
 			apartmentRepository.save(a);
@@ -47,7 +58,6 @@ public class HouseServiceImpl implements HouseService {
 
 	@Override
 	public House findById(Long id) {
-		System.out.println("id = " + id);
 		return houseRepository.findById(id).get();
 	}
 

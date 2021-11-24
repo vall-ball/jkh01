@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,10 +53,9 @@ public class HouseController {
 	
 	@PostMapping
 	public ResponseEntity<Object> create(@Valid @RequestBody House house) {
-		house.createApartments();
 		house.setStreet(house.getStreet().toLowerCase());
 		house.setNumber(house.getNumber().toLowerCase());
-		logger.info(house.toString());
+		house.createApartments();
 		try {
 			houseService.save(house);
 			return new ResponseEntity<>("House is created successfully", HttpStatus.CREATED);
@@ -65,15 +65,15 @@ public class HouseController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @Valid @RequestBody House house) {
+	public ResponseEntity<Object> update(@Valid @PathVariable(value = "id") Long id, @Valid @RequestBody House house) throws Exception {
 		try {
 			House houseForUpdate = houseService.findById(id);
 			houseForUpdate.setApartments(house.getApartments());
 			houseForUpdate.setApartmentsByLevel(house.getApartmentsByLevel());
 			houseForUpdate.setEntrances(house.getEntrances());
 			houseForUpdate.setLevels(house.getLevels());
-			houseForUpdate.setNumber(house.getNumber());
-			houseForUpdate.setStreet(house.getStreet());
+			houseForUpdate.setNumber(house.getNumber().toLowerCase());
+			houseForUpdate.setStreet(house.getStreet().toLowerCase());
 			houseService.save(houseForUpdate);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
@@ -99,16 +99,16 @@ public class HouseController {
 	}
 
 	@PutMapping("/{street}/{number}")
-	public ResponseEntity<Object> update(@PathVariable(value = "street") String street,
-			@PathVariable(value = "number") String number, @Valid @RequestBody House house) {
+	public ResponseEntity<Object> update(@Valid @PathVariable(value = "street") String street,
+			@PathVariable(value = "number") String number, @Valid @RequestBody House house) throws Exception {
 		try {
 			House houseForUpdate = houseService.findByAddress(street, number);
 			houseForUpdate.setApartments(house.getApartments());
 			houseForUpdate.setApartmentsByLevel(house.getApartmentsByLevel());
 			houseForUpdate.setEntrances(house.getEntrances());
 			houseForUpdate.setLevels(house.getLevels());
-			houseForUpdate.setNumber(house.getNumber());
-			houseForUpdate.setStreet(house.getStreet());
+			houseForUpdate.setNumber(house.getNumber().toLowerCase());
+			houseForUpdate.setStreet(house.getStreet().toLowerCase());
 			houseService.save(houseForUpdate);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
