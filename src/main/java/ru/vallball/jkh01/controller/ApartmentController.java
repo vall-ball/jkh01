@@ -35,13 +35,11 @@ public class ApartmentController {
 	ApartmentService apartmentService;
 
 	@GetMapping
-	@ResponseBody
 	public List<Apartment> list() {
 		return apartmentService.list();
 	}
 
 	@GetMapping("/{id}")
-	@ResponseBody
 	public ResponseEntity<Object> get(@PathVariable(value = "id") Long id) {
 		try {
 			return ResponseEntity.ok(apartmentService.findById(id));
@@ -90,7 +88,6 @@ public class ApartmentController {
 	}
 
 	@GetMapping("/{street}/{number}")
-	@ResponseBody
 	public List<Apartment> listByHouse(@PathVariable(value = "street") String street,
 			@PathVariable(value = "number") String number) {
 		return apartmentService.listByHome(street, number);

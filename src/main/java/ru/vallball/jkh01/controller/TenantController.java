@@ -31,13 +31,11 @@ public class TenantController {
 	TenantService tenantService;
 
 	@GetMapping
-	@ResponseBody
 	public List<Tenant> list() {
 		return tenantService.list();
 	}
 
 	@GetMapping("/{id}")
-	@ResponseBody
 	public Tenant get(@PathVariable(value = "id") Long id) {
 		return tenantService.findById(id);
 	}

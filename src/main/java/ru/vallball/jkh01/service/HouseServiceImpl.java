@@ -1,6 +1,7 @@
 package ru.vallball.jkh01.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -10,6 +11,7 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,7 +65,24 @@ public class HouseServiceImpl implements HouseService {
 
 	@Override
 	public House findByAddress(String street, String number) {
+		House house = houseRepository.findByStreetIgnoreCaseAndNumberIgnoreCase(street, number);
+		if (house == null) {
+			throw new NoSuchElementException();
+		}
 		return houseRepository.findByStreetIgnoreCaseAndNumberIgnoreCase(street, number);
+	}
+
+	@Override
+	public List<House> listByStreet(String street) {
+		return houseRepository.findByStreetIgnoreCase(street);
+	}
+
+	@Override
+	public void deleteByAddress(String street, String number) {
+		long l = houseRepository.deleteByStreetIgnoreCaseAndNumberIgnoreCase(street, number);
+		if (l == 0) {
+			throw new EmptyResultDataAccessException((int) l);
+		}
 	}
 
 }

@@ -36,13 +36,11 @@ public class HouseController {
 	HouseService houseService;
 
 	@GetMapping
-	@ResponseBody
 	public List<House> list() {
 		return houseService.list();
 	}
 
 	@GetMapping("/{id}")
-	@ResponseBody
 	public ResponseEntity<Object> get(@PathVariable(value = "id") Long id) {
 		try {
 			return ResponseEntity.ok(houseService.findById(id));
@@ -50,7 +48,21 @@ public class HouseController {
 			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
+	@GetMapping("/{street}/{number}")
+	public ResponseEntity<Object> getByAddress(@PathVariable(value = "street") String street, @PathVariable(value = "number") String number) {
+		try {
+			return ResponseEntity.ok(houseService.findByAddress(street, number));
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@GetMapping("/street/{street}")
+	public List<House> listByStreet(@PathVariable(value = "street") String street) {
+		return houseService.listByStreet(street);
+	}
+
 	@PostMapping
 	public ResponseEntity<Object> create(@Valid @RequestBody House house) {
 		house.setStreet(house.getStreet().toLowerCase());
@@ -65,7 +77,8 @@ public class HouseController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Object> update(@Valid @PathVariable(value = "id") Long id, @Valid @RequestBody House house) throws Exception {
+	public ResponseEntity<Object> update(@Valid @PathVariable(value = "id") Long id, @Valid @RequestBody House house)
+			throws Exception {
 		try {
 			House houseForUpdate = houseService.findById(id);
 			houseForUpdate.setApartments(house.getApartments());
@@ -79,23 +92,6 @@ public class HouseController {
 			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>("House is updated successfully", HttpStatus.ACCEPTED);
-	}
-
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Object> delete(@PathVariable(value = "id") Long id) {
-		try {
-			houseService.delete(id);
-		} catch (EmptyResultDataAccessException e) {
-			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
-		}
-		return new ResponseEntity<>("House is deleted successfully", HttpStatus.ACCEPTED);
-	}
-
-	@GetMapping("/{street}/{number}")
-	@ResponseBody
-	public House getByAddress(@PathVariable(value = "street") String street,
-			@PathVariable(value = "number") String number) {
-		return houseService.findByAddress(street, number);
 	}
 
 	@PutMapping("/{street}/{number}")
@@ -114,6 +110,26 @@ public class HouseController {
 			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>("House is updated successfully", HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Object> delete(@PathVariable(value = "id") Long id) {
+		try {
+			houseService.delete(id);
+		} catch (EmptyResultDataAccessException e) {
+			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("House is deleted successfully", HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/{street}/{number}") 
+	public ResponseEntity<Object> delete(@PathVariable(value = "street") String street,	@PathVariable(value = "number") String number) {
+		try {
+			houseService.deleteByAddress(street, number);
+		} catch (EmptyResultDataAccessException e) {
+			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("House is deleted successfully", HttpStatus.ACCEPTED);
 	}
 
 }

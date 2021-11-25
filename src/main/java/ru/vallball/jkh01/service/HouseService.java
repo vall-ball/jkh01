@@ -11,9 +11,13 @@ public interface HouseService {
 	List<House> list();
 
 	void delete(Long id);
+	
+	void deleteByAddress(String street, String number);
 
 	House findById(Long id);
 	
 	House findByAddress(String street, String number);
+	
+	List<House> listByStreet(String street);
 	
 }
