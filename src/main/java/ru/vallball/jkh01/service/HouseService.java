@@ -7,6 +7,8 @@ import ru.vallball.jkh01.model.House;
 public interface HouseService {
 	
 	void save(House house) throws Exception;
+	
+	void update(House house, boolean check) throws Exception;
 
 	List<House> list();
 

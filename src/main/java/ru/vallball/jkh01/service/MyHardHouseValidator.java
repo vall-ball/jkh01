@@ -1,6 +1,9 @@
 package ru.vallball.jkh01.service;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.HashMapChangeSet;
 import org.springframework.stereotype.Component;
 
 import ru.vallball.jkh01.model.House;
@@ -21,5 +24,19 @@ public class MyHardHouseValidator {
 			}
 		}
 		return answer;
+	}
+	
+	public boolean isFieldsChanged(Long id, Map<String, Object> changes) {
+		House house = houseRepository.getById(id);
+		if (changes.containsKey("levels") && (int) changes.get("levels") != house.getLevels()) {
+			return true;
+		}
+		if (changes.containsKey("entrances") && (int) changes.get("entrances") != house.getEntrances()) {
+			return true;
+		}
+		if (changes.containsKey("apartmentsByLevel") && (int) changes.get("apartmentsByLevel") != house.getApartmentsByLevel()) {
+			return true;
+		}
+		return false;
 	}
 }

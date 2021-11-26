@@ -39,6 +39,7 @@ public class HouseServiceImpl implements HouseService {
 	public void save(House house) throws Exception {
 		house.setStreet(house.getStreet().toLowerCase());
 		house.setNumber(house.getNumber().toLowerCase());
+		house.createApartments();
 		if (!validator.isUnique(house)) {
 			throw new Exception("The number and the street must be unique");
 		}
@@ -47,6 +48,23 @@ public class HouseServiceImpl implements HouseService {
 			apartmentRepository.save(a);
 		}
 	}
+	
+
+	@Override
+	public void update(House house, boolean check) throws Exception {
+		if (!validator.isUnique(house)) {
+			throw new Exception("The number and the street must be unique");
+		}
+		if (check) {
+			house.createApartments();
+		}
+		houseRepository.save(house);
+		for (Apartment a : house.getApartments()) {
+			apartmentRepository.save(a);
+		}
+		
+	}
+
 
 	@Override
 	public List<House> list() {
