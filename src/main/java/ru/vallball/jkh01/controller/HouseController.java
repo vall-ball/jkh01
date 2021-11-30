@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,13 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
 import ru.vallball.jkh01.model.House;
 import ru.vallball.jkh01.service.HouseService;
-import ru.vallball.jkh01.service.MyHardHouseValidator;
 
 @RestController
 @RequestMapping(value = "/houses")
@@ -37,9 +32,8 @@ public class HouseController {
 
 	@Autowired
 	HouseService houseService;
+
 	
-	@Autowired
-	MyHardHouseValidator validator;
 
 	@GetMapping
 	public List<House> list() {
@@ -91,8 +85,7 @@ public class HouseController {
 	}
 
 	@DeleteMapping("/{street}/{number}")
-	public ResponseEntity<Object> delete(@PathVariable(value = "street") String street,
-			@PathVariable(value = "number") String number) {
+	public ResponseEntity<Object> delete(@PathVariable(value = "street") String street,	@PathVariable(value = "number") String number) {
 		try {
 			houseService.deleteByAddress(street, number);
 		} catch (EmptyResultDataAccessException e) {
@@ -102,31 +95,42 @@ public class HouseController {
 	}
 
 	@PatchMapping("/{id}")
-	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @RequestBody Map<String, Object> changes) throws Exception {
+	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @RequestBody Map<String, Object> changes) {
 		try {
-			boolean check = validator.isFieldsChanged(id, changes);
-			House houseForUpdate = houseService.findById(id);
-			changes.forEach((change, value) -> {
-	                    switch (change){
-	                        case "street": houseForUpdate.setStreet(((String) value).toLowerCase()); 
-	                        	break;
-	                        case "number": houseForUpdate.setNumber(((String) value).toLowerCase()); 
-	                        	break;
-	                        case "entrances": houseForUpdate.setEntrances(((int) value)); 
-                        		break;
-	                        case "levels": houseForUpdate.setLevels(((int) value)); 
-                        		break;
-	                        case "apartmentsByLevel": houseForUpdate.setApartmentsByLevel(((int) value)); 
-                        		break;
-	                    }
-	                }
-			);
-			houseService.update(houseForUpdate, check);
+			houseService.update(id, changes);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>("House is updated successfully", HttpStatus.ACCEPTED);
 	}
+	
+	@PatchMapping("/{street}/{number}")
+	public ResponseEntity<Object> update(@PathVariable(value = "street") String street, @PathVariable(value = "number") String number, @RequestBody Map<String, Object> changes) {
+		try {
+			houseService.update(street, number, changes);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("House is updated successfully", HttpStatus.ACCEPTED);
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @Valid @RequestBody House house) {
+		try {
+			houseService.update(id, house);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("House is updated successfully", HttpStatus.ACCEPTED);
+	}
+
+
 
 	/*
 	 * @PutMapping("/{id}") public ResponseEntity<Object>

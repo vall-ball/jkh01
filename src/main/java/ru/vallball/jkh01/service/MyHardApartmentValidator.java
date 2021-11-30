@@ -35,7 +35,7 @@ public class MyHardApartmentValidator {
 		boolean answer = true;
 		House house = houseRepository.getById(value.getHouse().getId());
 		for (Apartment a : house.getApartments()) {
-			if (a.getNumber() == value.getNumber()) {
+			if (a.getNumber() == value.getNumber() && (value.getId() == null || !value.getId().equals(a.getId()))) {
 				answer = false;
 				break;
 			}

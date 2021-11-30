@@ -1,13 +1,8 @@
 package ru.vallball.jkh01.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +26,7 @@ public class HouseServiceImpl implements HouseService {
 
 	@Autowired
 	ApartmentRepository apartmentRepository;
-	
+
 	@Autowired
 	MyHardHouseValidator validator;
 
@@ -39,32 +34,103 @@ public class HouseServiceImpl implements HouseService {
 	public void save(House house) throws Exception {
 		house.setStreet(house.getStreet().toLowerCase());
 		house.setNumber(house.getNumber().toLowerCase());
-		house.createApartments();
 		if (!validator.isUnique(house)) {
 			throw new Exception("The number and the street must be unique");
 		}
+		house.createApartments();
 		houseRepository.save(house);
 		for (Apartment a : house.getApartments()) {
 			apartmentRepository.save(a);
 		}
 	}
-	
 
 	@Override
-	public void update(House house, boolean check) throws Exception {
-		if (!validator.isUnique(house)) {
-			throw new Exception("The number and the street must be unique");
+	public void update(Long id, Map<String, Object> changes) throws Exception {
+		House houseForUpdate = findById(id);
+		if (changes.containsKey("street") && !changes.get("street").equals(houseForUpdate.getStreet())
+				|| changes.containsKey("number") && !changes.get("number").equals(houseForUpdate.getNumber())) {
+			if (!validator.isUnique(id, changes)) {
+				throw new Exception("The number and the street must be unique");
+			}
 		}
+		boolean check = validator.isFieldsChanged(id, changes);
+		changes.forEach((change, value) -> {
+			switch (change) {
+			case "street":
+				houseForUpdate.setStreet(((String) value).toLowerCase());
+				break;
+			case "number":
+				houseForUpdate.setNumber((String.valueOf(value)).toLowerCase());
+				break;
+			case "entrances":
+				houseForUpdate.setEntrances(((int) value));
+				break;
+			case "levels":
+				houseForUpdate.setLevels(((int) value));
+				break;
+			case "apartmentsByLevel":
+				houseForUpdate.setApartmentsByLevel(((int) value));
+				break;
+			}
+		});
+
 		if (check) {
-			house.createApartments();
+			for (Apartment a : houseForUpdate.getApartments()) {
+				apartmentRepository.delete(a);
+			}
+			houseForUpdate.createApartments();
 		}
-		houseRepository.save(house);
-		for (Apartment a : house.getApartments()) {
+
+		houseRepository.save(houseForUpdate);
+		for (Apartment a : houseForUpdate.getApartments()) {
 			apartmentRepository.save(a);
 		}
-		
+
 	}
 
+	@Override
+	public void update(String street, String number, Map<String, Object> changes) throws Exception {
+		House houseForUpdate = findByAddress(street, number);
+		if (changes.containsKey("street") && !changes.get("street").equals(houseForUpdate.getStreet())
+				|| changes.containsKey("number") && !changes.get("number").equals(houseForUpdate.getNumber())) {
+			if (!validator.isUnique(houseForUpdate.getId(), changes)) {
+				throw new Exception("The number and the street must be unique");
+			}
+		}
+		boolean check = validator.isFieldsChangedByAddress(street, number, changes);
+		changes.forEach((change, value) -> {
+			switch (change) {
+			case "street":
+				houseForUpdate.setStreet(((String) value).toLowerCase());
+				break;
+			case "number":
+				houseForUpdate.setNumber((String.valueOf(value)).toLowerCase());
+				break;
+			case "entrances":
+				houseForUpdate.setEntrances(((int) value));
+				break;
+			case "levels":
+				houseForUpdate.setLevels(((int) value));
+				break;
+			case "apartmentsByLevel":
+				houseForUpdate.setApartmentsByLevel(((int) value));
+				break;
+			}
+		});
+
+		if (check) {
+			for (Apartment a : houseForUpdate.getApartments()) {
+				apartmentRepository.delete(a);
+			}
+			houseForUpdate.createApartments();
+		}
+
+		houseRepository.save(houseForUpdate);
+		for (Apartment a : houseForUpdate.getApartments()) {
+			apartmentRepository.save(a);
+		}
+
+	}
 
 	@Override
 	public List<House> list() {
@@ -87,7 +153,7 @@ public class HouseServiceImpl implements HouseService {
 		if (house == null) {
 			throw new NoSuchElementException();
 		}
-		return houseRepository.findByStreetIgnoreCaseAndNumberIgnoreCase(street, number);
+		return house;
 	}
 
 	@Override
@@ -103,4 +169,33 @@ public class HouseServiceImpl implements HouseService {
 		}
 	}
 
+	@Override
+	public void update(Long id, House house) throws Exception {
+		House houseForUpdate = findById(id);
+		if (!house.getStreet().equals(houseForUpdate.getStreet())
+				|| !house.getNumber().equals(houseForUpdate.getNumber())) {
+			if (!validator.isUnique(house)) {
+				throw new Exception("The number and the street must be unique");
+			}
+			boolean check = validator.isFieldsNotChanged(id, house);
+			houseForUpdate.setApartmentsByLevel(house.getApartmentsByLevel());
+			houseForUpdate.setEntrances(house.getEntrances());
+			houseForUpdate.setLevels(house.getLevels());
+			houseForUpdate.setNumber(house.getNumber());
+			houseForUpdate.setStreet(house.getStreet());
+			if (check) {
+				for (Apartment a : houseForUpdate.getApartments()) {
+					apartmentRepository.delete(a);
+				}
+				houseForUpdate.createApartments();
+			}
+
+			houseRepository.save(houseForUpdate);
+			for (Apartment a : houseForUpdate.getApartments()) {
+				apartmentRepository.save(a);
+			}
+
+		}
+
+	}
 }

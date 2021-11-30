@@ -120,7 +120,7 @@ public class House {
 
 	@Override
 	public String toString() {
-		return "House [street=" + street + ", number=" + number + ", entrances=" + entrances + ", levels=" + levels
+		return "House [id=" + id + ", street=" + street + ", number=" + number + ", entrances=" + entrances + ", levels=" + levels
 				+ ", apartmentsByLevel=" + apartmentsByLevel + "]";
 	}
 	

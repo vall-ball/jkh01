@@ -1,6 +1,7 @@
 package ru.vallball.jkh01.service;
 
 import java.util.List;
+import java.util.Map;
 
 import ru.vallball.jkh01.model.House;
 
@@ -8,7 +9,9 @@ public interface HouseService {
 	
 	void save(House house) throws Exception;
 	
-	void update(House house, boolean check) throws Exception;
+	public void update(Long id, Map<String, Object> changes) throws Exception;
+	
+	public void update(String street, String number, Map<String, Object> changes) throws Exception;
 
 	List<House> list();
 
@@ -21,5 +24,7 @@ public interface HouseService {
 	House findByAddress(String street, String number);
 	
 	List<House> listByStreet(String street);
+
+	void update(Long id, House house) throws Exception;
 	
 }
