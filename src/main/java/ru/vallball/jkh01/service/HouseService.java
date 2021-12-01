@@ -27,4 +27,6 @@ public interface HouseService {
 
 	void update(Long id, House house) throws Exception;
 	
+	void update(String street, String number, House house) throws Exception;
+	
 }

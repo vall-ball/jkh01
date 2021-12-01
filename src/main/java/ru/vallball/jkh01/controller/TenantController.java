@@ -3,8 +3,6 @@ package ru.vallball.jkh01.controller;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -16,10 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
 import ru.vallball.jkh01.model.Tenant;
 import ru.vallball.jkh01.service.TenantService;
 
@@ -46,7 +41,7 @@ public class TenantController {
 			tenantService.save(tenant);
 			return new ResponseEntity<>("Tenant is created successfully", HttpStatus.CREATED);
 		} catch (Exception e) {
-			return new ResponseEntity("Tenant is exist", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Object>("Tenant is exist", HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -63,7 +58,7 @@ public class TenantController {
 		}
 		return new ResponseEntity<>("Tenant is updated successfully", HttpStatus.ACCEPTED);
 	}
-	
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Object> delete(@PathVariable(value = "id") Long id) {
 		try {
@@ -73,6 +68,5 @@ public class TenantController {
 		}
 		return new ResponseEntity<>("Tenant is deleted successfully", HttpStatus.ACCEPTED);
 	}
-
 
 }

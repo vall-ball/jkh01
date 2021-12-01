@@ -177,25 +177,50 @@ public class HouseServiceImpl implements HouseService {
 			if (!validator.isUnique(house)) {
 				throw new Exception("The number and the street must be unique");
 			}
-			boolean check = validator.isFieldsNotChanged(id, house);
-			houseForUpdate.setApartmentsByLevel(house.getApartmentsByLevel());
-			houseForUpdate.setEntrances(house.getEntrances());
-			houseForUpdate.setLevels(house.getLevels());
-			houseForUpdate.setNumber(house.getNumber());
-			houseForUpdate.setStreet(house.getStreet());
-			if (check) {
-				for (Apartment a : houseForUpdate.getApartments()) {
-					apartmentRepository.delete(a);
-				}
-				houseForUpdate.createApartments();
-			}
-
-			houseRepository.save(houseForUpdate);
-			for (Apartment a : houseForUpdate.getApartments()) {
-				apartmentRepository.save(a);
-			}
-
 		}
-
+		boolean check = validator.isFieldsNotChanged(id, house);
+		houseForUpdate.setApartmentsByLevel(house.getApartmentsByLevel());
+		houseForUpdate.setEntrances(house.getEntrances());
+		houseForUpdate.setLevels(house.getLevels());
+		houseForUpdate.setNumber(house.getNumber());
+		houseForUpdate.setStreet(house.getStreet());
+		if (!check) {
+			for (Apartment a : houseForUpdate.getApartments()) {
+				apartmentRepository.delete(a);
+			}
+			houseForUpdate.createApartments();
+		}
+		houseRepository.save(houseForUpdate);
+		for (Apartment a : houseForUpdate.getApartments()) {
+			apartmentRepository.save(a);
+		}
 	}
+
+	@Override
+	public void update(String street, String number, House house) throws Exception {
+		House houseForUpdate = findByAddress(street, number);
+		if (!house.getStreet().equals(houseForUpdate.getStreet())
+				|| !house.getNumber().equals(houseForUpdate.getNumber())) {
+			if (!validator.isUnique(house)) {
+				throw new Exception("The number and the street must be unique");
+			}
+		}
+		boolean check = validator.isFieldsNotChangedByAddress(street, number, house);
+		houseForUpdate.setApartmentsByLevel(house.getApartmentsByLevel());
+		houseForUpdate.setEntrances(house.getEntrances());
+		houseForUpdate.setLevels(house.getLevels());
+		houseForUpdate.setNumber(house.getNumber());
+		houseForUpdate.setStreet(house.getStreet());
+		if (!check) {
+			for (Apartment a : houseForUpdate.getApartments()) {
+				apartmentRepository.delete(a);
+			}
+			houseForUpdate.createApartments();
+		}
+		houseRepository.save(houseForUpdate);
+		for (Apartment a : houseForUpdate.getApartments()) {
+			apartmentRepository.save(a);
+		}
+	}
+
 }

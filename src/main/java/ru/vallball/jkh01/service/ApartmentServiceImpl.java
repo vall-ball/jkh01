@@ -1,19 +1,13 @@
 package ru.vallball.jkh01.service;
 
 import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-
+import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-
 import ru.vallball.jkh01.model.Apartment;
 import ru.vallball.jkh01.model.House;
 import ru.vallball.jkh01.repository.ApartmentRepository;
@@ -27,7 +21,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
 	@Autowired
 	ApartmentRepository apartmentRepository;
-	
+
 	@Autowired
 	HouseRepository houseRepository;
 
@@ -37,13 +31,14 @@ public class ApartmentServiceImpl implements ApartmentService {
 	@Override
 	public void save(Apartment apartment) throws Exception {
 		if (!validator.checkEntrance(apartment)) {
-			throw new Exception("The number of the entrance must be not more than the quantity of entrances in the house");
+			throw new Exception(
+					"The number of the entrance must be not more than the quantity of entrances in the house");
 		}
 		if (!validator.checkLevel(apartment)) {
 			throw new Exception("The number of the level must be not more than the max level in the house");
 		}
 		if (!validator.isUnique(apartment)) {
-			throw new Exception("The apartment with the same number exists in this house"); 
+			throw new Exception("The apartment with the same number exists in this house");
 		}
 		apartmentRepository.save(apartment);
 	}
@@ -68,6 +63,31 @@ public class ApartmentServiceImpl implements ApartmentService {
 	public List<Apartment> listByHome(String street, String number) {
 		House house = houseRepository.findByStreetIgnoreCaseAndNumberIgnoreCase(street, number);
 		return apartmentRepository.findByHouse(house);
+	}
+
+	@Override
+	public Apartment findByAddress(String street, String numberOfHouse, int numberOfApartment) {
+		House house = houseRepository.findByStreetIgnoreCaseAndNumberIgnoreCase(street, numberOfHouse);
+		if (house == null) {
+			throw new NoSuchElementException();
+		}
+		Apartment apartment = apartmentRepository.findByHouseAndNumber(house, numberOfApartment);
+		if (apartment == null) {
+			throw new NoSuchElementException();
+		}
+		return apartment;
+	}
+
+	@Override
+	public void deleteByAddress(String street, String numberOfHouse, int numberOfApartment) {
+		House house = houseRepository.findByStreetIgnoreCaseAndNumberIgnoreCase(street, numberOfHouse);
+		if (house == null) {
+			throw new EmptyResultDataAccessException(-1);
+		}
+		long l = apartmentRepository.deleteByHouseAndNumber(house, numberOfApartment);
+		if (l == 0) {
+			throw new EmptyResultDataAccessException((int) l);
+		}
 	}
 
 }

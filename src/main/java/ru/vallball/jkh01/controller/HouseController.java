@@ -130,39 +130,15 @@ public class HouseController {
 		return new ResponseEntity<>("House is updated successfully", HttpStatus.ACCEPTED);
 	}
 
-
-
-	/*
-	 * @PutMapping("/{id}") public ResponseEntity<Object>
-	 * update(@Valid @PathVariable(value = "id") Long id, @Valid @RequestBody House
-	 * house) throws Exception { try { House houseForUpdate =
-	 * houseService.findById(id);
-	 * houseForUpdate.setApartments(house.getApartments());
-	 * houseForUpdate.setApartmentsByLevel(house.getApartmentsByLevel());
-	 * houseForUpdate.setEntrances(house.getEntrances());
-	 * houseForUpdate.setLevels(house.getLevels());
-	 * houseForUpdate.setNumber(house.getNumber().toLowerCase());
-	 * houseForUpdate.setStreet(house.getStreet().toLowerCase());
-	 * houseService.save(houseForUpdate); } catch (NoSuchElementException e) {
-	 * return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST); }
-	 * return new ResponseEntity<>("House is updated successfully",
-	 * HttpStatus.ACCEPTED); }
-	 * 
-	 * @PutMapping("/{street}/{number}") public ResponseEntity<Object>
-	 * update(@Valid @PathVariable(value = "street") String street,
-	 * 
-	 * @PathVariable(value = "number") String number, @Valid @RequestBody House
-	 * house) throws Exception { try { House houseForUpdate =
-	 * houseService.findByAddress(street, number);
-	 * houseForUpdate.setApartments(house.getApartments());
-	 * houseForUpdate.setApartmentsByLevel(house.getApartmentsByLevel());
-	 * houseForUpdate.setEntrances(house.getEntrances());
-	 * houseForUpdate.setLevels(house.getLevels());
-	 * houseForUpdate.setNumber(house.getNumber().toLowerCase());
-	 * houseForUpdate.setStreet(house.getStreet().toLowerCase());
-	 * houseService.save(houseForUpdate); } catch (NoSuchElementException e) {
-	 * return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST); }
-	 * return new ResponseEntity<>("House is updated successfully",
-	 * HttpStatus.ACCEPTED); }
-	 */
+	@PutMapping("/{street}/{number}")
+	public ResponseEntity<Object> update(@PathVariable(value = "street") String street, @PathVariable(value = "number") String number, @Valid @RequestBody House house) {
+		try {
+			houseService.update(street, number, house);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("House not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("House is updated successfully", HttpStatus.ACCEPTED);
+	}
 }

@@ -3,12 +3,9 @@ package ru.vallball.jkh01.jail;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ru.vallball.jkh01.model.Apartment;
-import ru.vallball.jkh01.repository.HouseRepository;
-import ru.vallball.jkh01.service.HouseService;
 
 @Component
 public class ApartmentValidator implements ConstraintValidator<ApartmentConstraint, Apartment> {

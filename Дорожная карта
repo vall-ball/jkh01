@@ -21,17 +21,14 @@
 ------------------
 ТЕКУЧКА
 ---------------
-House:
-put (by address) - проверять, что все валидации проходят
+сортировка в get 
 
 Apartment:
-get (by address)
-delete (by address)
-post (by address)проверять, что все валидации проходят
-put or patch (by address) проверять, что все валидации проходят
+post
+put or patch (by address)
 
 Tenant:
 get (by address)
 delete (by address)каскад
-post (by address)проверять, что все валидации проходят
-put or patch (by address) проверять, что все валидации проходят
+post
+put or patch (by address)

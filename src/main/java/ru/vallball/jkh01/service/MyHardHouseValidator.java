@@ -34,25 +34,28 @@ public class MyHardHouseValidator {
 		if (!changes.containsKey("number") && !changes.containsKey("street")) {
 			return true;
 		}
-		
+
 		List<House> houses = houseRepository.findAll();
 		House house = houseRepository.getById(id);
-		
+
 		if (changes.containsKey("number") && changes.containsKey("street")) {
 			for (House h : houses) {
-				if (h.getNumber().equals(((String) changes.get("number")).toLowerCase()) && h.getStreet().equals(((String) changes.get("street")).toLowerCase())) {
+				if (h.getNumber().equals(((String) changes.get("number")).toLowerCase())
+						&& h.getStreet().equals(((String) changes.get("street")).toLowerCase())) {
 					return false;
 				}
 			}
 		} else if (changes.containsKey("number") && !changes.containsKey("street")) {
 			for (House h : houses) {
-				if (h.getNumber().equals(((String) changes.get("number")).toLowerCase()) && h.getStreet().equals(house.getStreet())) {
+				if (h.getNumber().equals(((String) changes.get("number")).toLowerCase())
+						&& h.getStreet().equals(house.getStreet())) {
 					return false;
 				}
 			}
 		} else if (!changes.containsKey("number") && changes.containsKey("street")) {
 			for (House h : houses) {
-				if (h.getNumber().equals(house.getNumber()) && h.getStreet().equals(((String) changes.get("street")).toLowerCase())) {
+				if (h.getNumber().equals(house.getNumber())
+						&& h.getStreet().equals(((String) changes.get("street")).toLowerCase())) {
 					return false;
 				}
 			}
@@ -68,7 +71,8 @@ public class MyHardHouseValidator {
 		if (changes.containsKey("entrances") && (int) changes.get("entrances") != house.getEntrances()) {
 			return true;
 		}
-		if (changes.containsKey("apartmentsByLevel") && (int) changes.get("apartmentsByLevel") != house.getApartmentsByLevel()) {
+		if (changes.containsKey("apartmentsByLevel")
+				&& (int) changes.get("apartmentsByLevel") != house.getApartmentsByLevel()) {
 			return true;
 		}
 		return false;
@@ -82,14 +86,25 @@ public class MyHardHouseValidator {
 		if (changes.containsKey("entrances") && (int) changes.get("entrances") != house.getEntrances()) {
 			return true;
 		}
-		if (changes.containsKey("apartmentsByLevel") && (int) changes.get("apartmentsByLevel") != house.getApartmentsByLevel()) {
+		if (changes.containsKey("apartmentsByLevel")
+				&& (int) changes.get("apartmentsByLevel") != house.getApartmentsByLevel()) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean isFieldsNotChanged(Long id, House house) {
 		House houseForUpdate = houseRepository.getById(id);
-		return houseForUpdate.getApartmentsByLevel() == house.getApartmentsByLevel() && houseForUpdate.getEntrances() == house.getEntrances() && houseForUpdate.getLevels() == house.getLevels();
+		return houseForUpdate.getApartmentsByLevel() == house.getApartmentsByLevel()
+				&& houseForUpdate.getEntrances() == house.getEntrances()
+				&& houseForUpdate.getLevels() == house.getLevels();
 	}
+
+	public boolean isFieldsNotChangedByAddress(String street, String number, House house) {
+		House houseForUpdate = houseRepository.findByStreetIgnoreCaseAndNumberIgnoreCase(street, number);
+		return houseForUpdate.getApartmentsByLevel() == house.getApartmentsByLevel()
+				&& houseForUpdate.getEntrances() == house.getEntrances()
+				&& houseForUpdate.getLevels() == house.getLevels();
+	}
+
 }

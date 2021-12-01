@@ -25,13 +25,13 @@ public class Apartment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Positive
+	@Positive(message = "The number must be more zero")
 	private int number;
 	
-	@NotNull
+	@Positive(message = "The number of entrance must be more zero")
 	private int entrance;
 	
-	@NotNull
+	@Positive(message = "The number of level must be more zero")
 	private int level;
 	
 	@NotNull
@@ -39,17 +39,17 @@ public class Apartment {
 	@JoinColumn(name = "house_id", nullable = false)
 	private House house;
 	
-	@PositiveOrZero
+	@PositiveOrZero(message = "The area must be not negative")
 	private double area;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "tenant_id")
 	private Tenant tenant;
 	
-	@PositiveOrZero
+	@PositiveOrZero(message = "The number of tenats must be not negative")
 	private int howManyTenants;
 	
-	@PositiveOrZero
+	@PositiveOrZero(message = "The number of rooms must be not negative")
 	private int howManyRooms;
 
 	public Apartment() {
