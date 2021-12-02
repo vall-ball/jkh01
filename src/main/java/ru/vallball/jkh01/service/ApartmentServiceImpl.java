@@ -90,4 +90,31 @@ public class ApartmentServiceImpl implements ApartmentService {
 		}
 	}
 
+	@Override
+	public void update(Long id, Apartment apartment) throws Exception {
+		Apartment apartmentForUpdate = findById(id);
+		if (!apartment.getHouse().getId().equals(apartmentForUpdate.getHouse().getId())
+				|| !(apartment.getNumber() == apartmentForUpdate.getNumber())) {
+			if (!validator.isUnique(apartment)) {
+				throw new Exception("The number and the house must be unique");
+			}
+		}
+		if (!validator.checkEntrance(apartment)) {
+			throw new Exception("The number of the entrance must be not more than the numbers of the entrances of the house");
+		}
+		if (!validator.checkLevel(apartment)) {
+			throw new Exception("The number of the level must be not more than the numbers of the levels of the house");
+		}
+		
+		apartmentForUpdate.setArea(apartment.getArea());
+		apartmentForUpdate.setEntrance(apartment.getEntrance());
+		apartmentForUpdate.setHouse(apartment.getHouse());
+		apartmentForUpdate.setHowManyRooms(apartment.getHowManyRooms());
+		apartmentForUpdate.setHowManyTenants(apartment.getHowManyTenants());
+		apartmentForUpdate.setLevel(apartment.getLevel());
+		apartmentForUpdate.setNumber(apartment.getNumber());
+		apartmentForUpdate.setTenant(apartment.getTenant());
+		apartmentRepository.save(apartmentForUpdate);
+	}
+
 }

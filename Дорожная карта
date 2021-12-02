@@ -21,11 +21,9 @@
 ------------------
 ТЕКУЧКА
 ---------------
-сортировка в get 
 
 Apartment:
-post
-put or patch (by address)
+put (only on address) and patch (and by address)
 
 Tenant:
 get (by address)

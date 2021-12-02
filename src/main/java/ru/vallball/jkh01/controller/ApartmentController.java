@@ -1,6 +1,8 @@
 package ru.vallball.jkh01.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +49,15 @@ public class ApartmentController {
 
 	@GetMapping("/{street}/{numberOfHouse}/{numberOfApartment}")
 	public ResponseEntity<Object> get(@PathVariable(value = "street") String street,
-			@PathVariable(value = "numberOfHouse") String numberOfHouse, @PathVariable(value = "numberOfApartment") int numberOfApartment) {
+			@PathVariable(value = "numberOfHouse") String numberOfHouse,
+			@PathVariable(value = "numberOfApartment") int numberOfApartment) {
 		try {
 			return ResponseEntity.ok(apartmentService.findByAddress(street, numberOfHouse, numberOfApartment));
 		} catch (Exception e) {
 			return new ResponseEntity<>("Apartment not found", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Object> delete(@PathVariable(value = "id") Long id) {
 		try {
@@ -64,10 +67,11 @@ public class ApartmentController {
 		}
 		return new ResponseEntity<>("Apartment is deleted successfully", HttpStatus.ACCEPTED);
 	}
-	
+
 	@DeleteMapping("/{street}/{numberOfHouse}/{numberOfApartment}")
 	public ResponseEntity<Object> delete(@PathVariable(value = "street") String street,
-			@PathVariable(value = "numberOfHouse") String numberOfHouse, @PathVariable(value = "numberOfApartment") int numberOfApartment) {
+			@PathVariable(value = "numberOfHouse") String numberOfHouse,
+			@PathVariable(value = "numberOfApartment") int numberOfApartment) {
 		try {
 			apartmentService.deleteByAddress(street, numberOfHouse, numberOfApartment);
 		} catch (EmptyResultDataAccessException e) {
@@ -75,7 +79,6 @@ public class ApartmentController {
 		}
 		return new ResponseEntity<>("Apartment is deleted successfully", HttpStatus.ACCEPTED);
 	}
-
 
 	@PostMapping
 	public ResponseEntity<Object> create(@Valid @RequestBody Apartment apartment) {
@@ -88,23 +91,15 @@ public class ApartmentController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Object> update(@Valid @PathVariable(value = "id") Long id, @RequestBody Apartment apartment) {
+	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @Valid @RequestBody Apartment apartment) {
 		try {
-			Apartment apartmentForUpdate = apartmentService.findById(id);
-			apartmentForUpdate.setArea(apartment.getArea());
-			apartmentForUpdate.setEntrance(apartment.getEntrance());
-			apartmentForUpdate.setHouse(apartment.getHouse());
-			apartmentForUpdate.setHowManyRooms(apartment.getHowManyRooms());
-			apartmentForUpdate.setHowManyTenants(apartment.getHowManyTenants());
-			apartmentForUpdate.setLevel(apartment.getLevel());
-			apartmentForUpdate.setNumber(apartment.getNumber());
-			apartmentForUpdate.setTenant(apartment.getTenant());
-			apartmentService.save(apartmentForUpdate);
-		} catch (Exception e) {
+			apartmentService.update(id, apartment);
+		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>("Apartment not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>("Apartment is updated successfully", HttpStatus.ACCEPTED);
 	}
-
 
 }

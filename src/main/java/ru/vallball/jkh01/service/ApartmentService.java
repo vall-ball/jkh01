@@ -20,4 +20,6 @@ public interface ApartmentService {
 	List<Apartment> listByHome(String street, String number);
 	
 	Apartment findByAddress(String street, String numberOfHouse, int numberOfApartment);
+	
+	void update(Long id, Apartment apartment) throws Exception;
 }
