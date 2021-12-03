@@ -1,6 +1,7 @@
 package ru.vallball.jkh01.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.validation.Valid;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -101,5 +103,18 @@ public class ApartmentController {
 		}
 		return new ResponseEntity<>("Apartment is updated successfully", HttpStatus.ACCEPTED);
 	}
-
+	
+	@PutMapping("/{street}/{numberOfHouse}/{numberOfApartment}")
+	public ResponseEntity<Object> update(@PathVariable(value = "street") String street,
+			@PathVariable(value = "numberOfHouse") String numberOfHouse,
+			@PathVariable(value = "numberOfApartment") int numberOfApartment, @Valid @RequestBody Apartment apartment) {
+		try {
+			apartmentService.update(street, numberOfHouse, numberOfApartment, apartment);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("Apartment not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("Apartment is updated successfully", HttpStatus.ACCEPTED);
+	}
 }

@@ -21,10 +21,6 @@
 ------------------
 ТЕКУЧКА
 ---------------
-
-Apartment:
-put (only on address) and patch (and by address)
-
 Tenant:
 get (by address)
 delete (by address)каскад

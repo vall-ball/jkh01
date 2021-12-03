@@ -1,6 +1,7 @@
 package ru.vallball.jkh01.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,12 +101,48 @@ public class ApartmentServiceImpl implements ApartmentService {
 			}
 		}
 		if (!validator.checkEntrance(apartment)) {
-			throw new Exception("The number of the entrance must be not more than the numbers of the entrances of the house");
+			throw new Exception(
+					"The number of the entrance must be not more than the numbers of the entrances of the house");
 		}
 		if (!validator.checkLevel(apartment)) {
 			throw new Exception("The number of the level must be not more than the numbers of the levels of the house");
 		}
-		
+
+		apartmentForUpdate.setArea(apartment.getArea());
+		apartmentForUpdate.setEntrance(apartment.getEntrance());
+		apartmentForUpdate.setHouse(apartment.getHouse());
+		apartmentForUpdate.setHowManyRooms(apartment.getHowManyRooms());
+		apartmentForUpdate.setHowManyTenants(apartment.getHowManyTenants());
+		apartmentForUpdate.setLevel(apartment.getLevel());
+		apartmentForUpdate.setNumber(apartment.getNumber());
+		apartmentForUpdate.setTenant(apartment.getTenant());
+		apartmentRepository.save(apartmentForUpdate);
+	}
+
+	@Override
+	public void update(String street, String numberOfHouse, int numberOfApartment, Apartment apartment)
+			throws Exception {
+		House house = houseRepository.findByStreetIgnoreCaseAndNumberIgnoreCase(street, numberOfHouse);
+		if (house == null) {
+			throw new NoSuchElementException();
+		}
+		Apartment apartmentForUpdate = apartmentRepository.findByHouseAndNumber(house, numberOfApartment);
+		if (apartmentForUpdate == null) {
+			throw new NoSuchElementException();
+		}
+		if (!apartment.getHouse().getId().equals(apartmentForUpdate.getHouse().getId())
+				|| !(apartment.getNumber() == apartmentForUpdate.getNumber())) {
+			if (!validator.isUnique(apartment)) {
+				throw new Exception("The number and the house must be unique");
+			}
+		}
+		if (!validator.checkEntrance(apartment)) {
+			throw new Exception(
+					"The number of the entrance must be not more than the numbers of the entrances of the house");
+		}
+		if (!validator.checkLevel(apartment)) {
+			throw new Exception("The number of the level must be not more than the numbers of the levels of the house");
+		}
 		apartmentForUpdate.setArea(apartment.getArea());
 		apartmentForUpdate.setEntrance(apartment.getEntrance());
 		apartmentForUpdate.setHouse(apartment.getHouse());
