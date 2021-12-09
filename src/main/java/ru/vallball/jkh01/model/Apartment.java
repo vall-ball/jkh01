@@ -1,11 +1,16 @@
 package ru.vallball.jkh01.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -14,11 +19,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name = "apartments", uniqueConstraints = {@UniqueConstraint(columnNames = {"house_id", "number"})})
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Apartment {
 	
 	@Id
@@ -42,9 +51,13 @@ public class Apartment {
 	@PositiveOrZero(message = "The area must be not negative")
 	private double area;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "tenant_id")
-	private Tenant tenant;
+	@ManyToMany
+	@JoinTable(
+			  name = "apartments_tenants", 
+			  joinColumns = @JoinColumn(name = "apartment_id"), 
+			  inverseJoinColumns = @JoinColumn(name = "tenant_id"))
+	@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+	private List<Tenant> tenants = new ArrayList<>();;
 	
 	@PositiveOrZero(message = "The number of tenats must be not negative")
 	private int howManyTenants;
@@ -96,12 +109,12 @@ public class Apartment {
 		this.area = area;
 	}
 
-	public Tenant getTenant() {
-		return tenant;
+	public List<Tenant> getTenant() {
+		return tenants;
 	}
 
-	public void setTenant(Tenant tenant) {
-		this.tenant = tenant;
+	public void setTenant(List<Tenant> tenants) {
+		this.tenants = tenants;
 	}
 
 	public int getHowManyTenants() {
@@ -123,4 +136,12 @@ public class Apartment {
 	public Long getId() {
 		return id;
 	}
+	
+	@Override
+	public String toString() {
+		return "Apartment [id=" + id + ", number=" + number + ", entrance=" + entrance + ", level=" + level + ", house="
+				+ house + ", area=" + area + ", tenant=" + tenants + ", howManyTenants=" + howManyTenants
+				+ ", howManyRooms=" + howManyRooms + "]";
+	}
+
 }

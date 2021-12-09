@@ -107,7 +107,6 @@ public class ApartmentServiceImpl implements ApartmentService {
 		if (!validator.checkLevel(apartment)) {
 			throw new Exception("The number of the level must be not more than the numbers of the levels of the house");
 		}
-
 		apartmentForUpdate.setArea(apartment.getArea());
 		apartmentForUpdate.setEntrance(apartment.getEntrance());
 		apartmentForUpdate.setHouse(apartment.getHouse());

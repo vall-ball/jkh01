@@ -6,6 +6,8 @@ import java.util.NoSuchElementException;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,8 @@ import ru.vallball.jkh01.service.ApartmentService;
 @RequestMapping(value = "/apartments")
 public class ApartmentController {
 
+	static final Logger logger = LoggerFactory.getLogger(ApartmentController.class);
+	
 	@Autowired
 	ApartmentService apartmentService;
 
@@ -95,7 +99,9 @@ public class ApartmentController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @Valid @RequestBody Apartment apartment) {
 		try {
+			logger.info("Before calling apartmentService.update(id, apartment)");
 			apartmentService.update(id, apartment);
+			logger.info("After calling apartmentService.update(id, apartment)");
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>("Apartment not found", HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
