@@ -3,6 +3,8 @@ package ru.vallball.jkh01.controller;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import ru.vallball.jkh01.model.Apartment;
 import ru.vallball.jkh01.model.Tenant;
 import ru.vallball.jkh01.service.TenantService;
 
@@ -36,7 +40,7 @@ public class TenantController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Object> create(@RequestBody Tenant tenant) {
+	public ResponseEntity<Object> create(@Valid @RequestBody Tenant tenant) {
 		try {
 			tenantService.save(tenant);
 			return new ResponseEntity<>("Tenant is created successfully", HttpStatus.CREATED);
@@ -46,17 +50,15 @@ public class TenantController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @RequestBody Tenant tenant) {
+	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @Valid @RequestBody Tenant tenant) {
 		try {
-			Tenant tenantForUpdate = tenantService.findById(id);
-			tenantForUpdate.setApartment(tenant.getApartment());
-			tenantForUpdate.setLastname(tenant.getLastname());
-			tenantForUpdate.setName(tenant.getName());
-			tenantService.save(tenantForUpdate);
+			tenantService.update(id, tenant);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>("Tenant not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<>("Tenant is updated successfully", HttpStatus.ACCEPTED);
+		return new ResponseEntity<>("The tenant is updated successfully", HttpStatus.ACCEPTED);
 	}
 
 	@DeleteMapping("/{id}")
@@ -67,6 +69,40 @@ public class TenantController {
 			return new ResponseEntity<>("Tenant not found", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>("Tenant is deleted successfully", HttpStatus.ACCEPTED);
+	}
+	
+	@GetMapping("/{name}/{lastname}")
+	public ResponseEntity<Object> get(@PathVariable(value = "name") String name,
+			@PathVariable(value = "lastname") String lastname) {
+		try {
+			return ResponseEntity.ok(tenantService.findByName(name, lastname));
+		} catch (Exception e) {
+			return new ResponseEntity<>("The tenant not found", HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@DeleteMapping("/{name}/{lastname}")
+	public ResponseEntity<Object> delete(@PathVariable(value = "name") String name,
+			@PathVariable(value = "lastname") String lastname) {
+		try {
+			tenantService.deleteByName(name, lastname);
+		} catch (EmptyResultDataAccessException e) {
+			return new ResponseEntity<>("The tenant not found", HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("The tenant is deleted successfully", HttpStatus.ACCEPTED);
+	}
+	
+	@PutMapping("/{name}/{lastname}")
+	public ResponseEntity<Object> update(@PathVariable(value = "name") String name,
+			@PathVariable(value = "lastname") String lastname, @Valid @RequestBody Tenant tenant) {
+		try {
+			tenantService.update(name, lastname, tenant);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("The tenant not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("The tenant is updated successfully", HttpStatus.ACCEPTED);
 	}
 
 }

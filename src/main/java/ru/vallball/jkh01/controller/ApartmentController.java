@@ -29,7 +29,7 @@ import ru.vallball.jkh01.service.ApartmentService;
 public class ApartmentController {
 
 	static final Logger logger = LoggerFactory.getLogger(ApartmentController.class);
-	
+
 	@Autowired
 	ApartmentService apartmentService;
 
@@ -99,9 +99,7 @@ public class ApartmentController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @Valid @RequestBody Apartment apartment) {
 		try {
-			logger.info("Before calling apartmentService.update(id, apartment)");
 			apartmentService.update(id, apartment);
-			logger.info("After calling apartmentService.update(id, apartment)");
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>("Apartment not found", HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
@@ -109,7 +107,7 @@ public class ApartmentController {
 		}
 		return new ResponseEntity<>("Apartment is updated successfully", HttpStatus.ACCEPTED);
 	}
-	
+
 	@PutMapping("/{street}/{numberOfHouse}/{numberOfApartment}")
 	public ResponseEntity<Object> update(@PathVariable(value = "street") String street,
 			@PathVariable(value = "numberOfHouse") String numberOfHouse,

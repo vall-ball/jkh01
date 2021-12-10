@@ -1,14 +1,17 @@
 package ru.vallball.jkh01.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.vallball.jkh01.model.Apartment;
+import ru.vallball.jkh01.model.House;
 import ru.vallball.jkh01.model.Tenant;
 import ru.vallball.jkh01.repository.TenantRepository;
 
@@ -20,11 +23,15 @@ public class TenantServiceImpl implements TenantService{
 	
 	@Autowired
 	TenantRepository tenantRepository;
+	
+	@Autowired
+	MyHardTenantValidator validator;
 
 	@Override
-	public void save(Tenant tenant) {
-		logger.info("---------------------" + tenant.toString());
-		logger.info("---------------------" + tenant.getApartment().toString());
+	public void save(Tenant tenant) throws Exception {
+		if (!validator.isUnique(tenant)) {
+			throw new Exception("Such a tenant already in the list of the tenants!");
+		}
 		tenantRepository.save(tenant);
 	}
 
@@ -42,4 +49,51 @@ public class TenantServiceImpl implements TenantService{
 	public Tenant findById(Long id) {
 		return tenantRepository.findById(id).get();
 	}
+	
+	@Override
+	public void update(Long id, Tenant tenant) throws Exception {
+		Tenant tenantForUpdate = findById(id);
+		if (!validator.isUnique(tenant)) {
+			throw new Exception(
+					"Such a tenant has already existed");
+		}
+		tenantForUpdate.setApartment(tenant.getApartment());
+		tenantForUpdate.setLastname(tenant.getLastname());
+		tenantForUpdate.setName(tenant.getName());
+		tenantRepository.save(tenantForUpdate);
+	}
+
+	@Override
+	public Tenant findByName(String name, String lastname) {
+		Tenant tenant = tenantRepository.findByNameAndLastname(name, lastname);
+		if (tenant == null) {
+			throw new NoSuchElementException();
+		}
+		return tenant;
+	}
+
+	@Override
+	public void deleteByName(String name, String lastname) {
+		long l = tenantRepository.deleteByNameAndLastname(name, lastname);
+		if (l == 0) {
+			throw new EmptyResultDataAccessException((int) l);
+		}
+	}
+
+	@Override
+	public void update(String name, String lastname, Tenant tenant) throws Exception {
+		Tenant tenantForUpdate = tenantRepository.findByNameAndLastname(name, lastname);
+		if (tenantForUpdate == null) {
+			throw new NoSuchElementException();
+		}
+		if (!validator.isUnique(tenantForUpdate)) {
+			throw new Exception("Such a tenant has already existed");
+		}
+		tenantForUpdate.setApartment(tenant.getApartment());
+		tenantForUpdate.setLastname(tenant.getLastname());
+		tenantForUpdate.setName(tenant.getName());
+		tenantRepository.save(tenantForUpdate);
+	}
+	
+	
 }
