@@ -3,6 +3,8 @@ package ru.vallball.jkh01.service;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vallball.jkh01.model.Apartment;
 import ru.vallball.jkh01.model.House;
+import ru.vallball.jkh01.model.Tenant;
 import ru.vallball.jkh01.repository.ApartmentRepository;
 import ru.vallball.jkh01.repository.HouseRepository;
 
@@ -114,7 +117,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 		apartmentForUpdate.setHowManyTenants(apartment.getHowManyTenants());
 		apartmentForUpdate.setLevel(apartment.getLevel());
 		apartmentForUpdate.setNumber(apartment.getNumber());
-		apartmentForUpdate.setTenant(apartment.getTenant());
+		apartmentForUpdate.setTenants(apartment.getTenants());
 		apartmentRepository.save(apartmentForUpdate);
 	}
 
@@ -149,8 +152,35 @@ public class ApartmentServiceImpl implements ApartmentService {
 		apartmentForUpdate.setHowManyTenants(apartment.getHowManyTenants());
 		apartmentForUpdate.setLevel(apartment.getLevel());
 		apartmentForUpdate.setNumber(apartment.getNumber());
-		apartmentForUpdate.setTenant(apartment.getTenant());
+		apartmentForUpdate.setTenants(apartment.getTenants());
 		apartmentRepository.save(apartmentForUpdate);
+	}
+
+	@Override
+	public void addTenant(Tenant tenant, Long id) {
+		Apartment apartment = apartmentRepository.findById(id).get();
+		apartment.getTenants().add(tenant);
+		apartmentRepository.save(apartment);
+
+	}
+
+	@Override
+	public void addTenants(Set<Tenant> tenants, Long id) {
+		Apartment apartment = apartmentRepository.findById(id).get();
+		apartment.getTenants().addAll(tenants);
+		apartmentRepository.save(apartment);
+	}
+
+	@Override
+	public void removeTenant(Tenant tenant, Long id) {
+		Apartment apartment = apartmentRepository.findById(id).get();
+		for (Tenant t : apartment.getTenants()) {
+			if (t.getId().equals(tenant.getId())) {
+				apartment.getTenants().remove(t);
+				break;
+			}
+		}
+		apartmentRepository.save(apartment);
 	}
 
 }

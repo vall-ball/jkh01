@@ -1,7 +1,9 @@
 package ru.vallball.jkh01.service;
 
 import java.util.List;
+import java.util.Set;
 
+import ru.vallball.jkh01.model.Apartment;
 import ru.vallball.jkh01.model.Tenant;
 
 public interface TenantService {
@@ -21,5 +23,11 @@ public interface TenantService {
 	public void deleteByName(String name, String lastname);
 	
 	void update(String name, String lastname, Tenant tenant) throws Exception;
+	
+	void addApartment(Apartment apartment, Long id);
+	
+	void addApartments(Set<Apartment> apartments, Long id);
+	
+	void removeApartment(Apartment apartment, Long id);
 
 }

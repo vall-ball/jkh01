@@ -3,6 +3,7 @@ package ru.vallball.jkh01.controller;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vallball.jkh01.model.Apartment;
+import ru.vallball.jkh01.model.Tenant;
 import ru.vallball.jkh01.service.ApartmentService;
 
 @RestController
@@ -121,4 +123,41 @@ public class ApartmentController {
 		}
 		return new ResponseEntity<>("Apartment is updated successfully", HttpStatus.ACCEPTED);
 	}
+	
+	@PutMapping("/addTenant/{id}")
+	public ResponseEntity<Object> addTenant(@PathVariable(value = "id") Long id, @RequestBody Tenant tenant) {
+		try {
+			apartmentService.addTenant(tenant, id);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("Apartment not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("Apartment is updated successfully", HttpStatus.ACCEPTED);
+	}
+	
+	@PutMapping("/addTenants/{id}")
+	public ResponseEntity<Object> addTenants(@PathVariable(value = "id") Long id, @RequestBody Set<Tenant> tenants) {
+		try {
+			apartmentService.addTenants(tenants, id);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("Apartment not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("Apartment is updated successfully", HttpStatus.ACCEPTED);
+	}
+	
+	@PutMapping("/removeTenant/{id}")
+	public ResponseEntity<Object> removeTenant(@PathVariable(value = "id") Long id, @RequestBody Tenant tenant) {
+		try {
+			apartmentService.removeTenant(tenant, id);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("Apartment not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("Apartment is updated successfully", HttpStatus.ACCEPTED);
+	}
+	
 }

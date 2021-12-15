@@ -2,6 +2,7 @@ package ru.vallball.jkh01.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,7 @@ public class TenantServiceImpl implements TenantService{
 			throw new Exception(
 					"Such a tenant has already existed");
 		}
-		tenantForUpdate.setApartment(tenant.getApartment());
+		tenantForUpdate.setApartments(tenant.getApartments());
 		tenantForUpdate.setLastname(tenant.getLastname());
 		tenantForUpdate.setName(tenant.getName());
 		tenantRepository.save(tenantForUpdate);
@@ -89,11 +90,41 @@ public class TenantServiceImpl implements TenantService{
 		if (!validator.isUnique(tenantForUpdate)) {
 			throw new Exception("Such a tenant has already existed");
 		}
-		tenantForUpdate.setApartment(tenant.getApartment());
+		tenantForUpdate.setApartments(tenant.getApartments());
 		tenantForUpdate.setLastname(tenant.getLastname());
 		tenantForUpdate.setName(tenant.getName());
 		tenantRepository.save(tenantForUpdate);
 	}
+
+	@Override
+	public void addApartment(Apartment apartment, Long id) {
+		Tenant tenant = tenantRepository.findById(id).get();
+		tenant.getApartments().add(apartment);
+		tenantRepository.save(tenant);
+		
+	}
+
+	@Override
+	public void addApartments(Set<Apartment> apartments, Long id) {
+		Tenant tenant = tenantRepository.findById(id).get();
+		tenant.getApartments().addAll(apartments);
+		tenantRepository.save(tenant);
+		
+	}
+
+	@Override
+	public void removeApartment(Apartment apartment, Long id) {
+		Tenant tenant = tenantRepository.findById(id).get();
+		for (Apartment a : tenant.getApartments()) {
+			if (a.getId().equals(apartment.getId())) {
+				tenant.getApartments().remove(a);
+				break;
+			}
+		}
+		tenantRepository.save(tenant);
+		
+	}
+	
 	
 	
 }

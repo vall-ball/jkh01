@@ -2,6 +2,7 @@ package ru.vallball.jkh01.controller;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -103,6 +104,42 @@ public class TenantController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>("The tenant is updated successfully", HttpStatus.ACCEPTED);
+	}
+	
+	@PutMapping("/addApartment/{id}")
+	public ResponseEntity<Object> addApartment(@PathVariable(value = "id") Long id, @RequestBody Apartment apartment) {
+		try {
+			tenantService.addApartment(apartment, id);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("Tenant not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("Tenant is updated successfully", HttpStatus.ACCEPTED);
+	}
+	
+	@PutMapping("/addApartments/{id}")
+	public ResponseEntity<Object> addTenants(@PathVariable(value = "id") Long id, @RequestBody Set<Apartment> apartments) {
+		try {
+			tenantService.addApartments(apartments, id);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("Tenant not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("Tennant is updated successfully", HttpStatus.ACCEPTED);
+	}
+	
+	@PutMapping("/removeApartment/{id}")
+	public ResponseEntity<Object> removeApartment(@PathVariable(value = "id") Long id, @RequestBody Apartment apartment) {
+		try {
+			tenantService.removeApartment(apartment, id);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>("Tenant not found", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>("Tenant is updated successfully", HttpStatus.ACCEPTED);
 	}
 
 }

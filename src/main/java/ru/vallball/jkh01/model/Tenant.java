@@ -1,7 +1,7 @@
 package ru.vallball.jkh01.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,7 +39,7 @@ public class Tenant {
 			  name = "apartments_tenants", 
 			  joinColumns = @JoinColumn(name = "tenant_id"), 
 			  inverseJoinColumns = @JoinColumn(name = "apartment_id"))
-	private List<Apartment> apartments = new ArrayList<>();
+	private Set<Apartment> apartments = new HashSet<>();
 
 	public Tenant() {
 
@@ -66,11 +66,11 @@ public class Tenant {
 		this.lastname = lastname;
 	}
 
-	public List<Apartment> getApartment() {
+	public Set<Apartment> getApartments() {
 		return apartments;
 	}
 
-	public void setApartment(List<Apartment> apartments) {
+	public void setApartments(Set<Apartment> apartments) {
 		this.apartments = apartments;
 	}
 
