@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
 @SpringBootApplication
+//for microservice
 public class Jkh01Application {
 
 	static final Logger logger = LoggerFactory.getLogger(Jkh01Application.class);
